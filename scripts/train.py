@@ -10,9 +10,10 @@ from transformers import (
 from scripts.data_prep import load_and_preprocess_data
 
 # Check for MPS availability
-device = (
-    torch.device("mps") if torch.backends.mps.is_available() else torch.device("cpu")
-)
+if torch.backends.mps.is_available():
+    device = torch.device("mps")
+else:
+    device = torch.device("cpu")
 print(f"Using device: {device}")
 
 # Load model and tokenizer
@@ -34,9 +35,12 @@ if tune:
     import optuna
 
     def objective(trial):
-        lr = trial.suggest_float("lr", 1e-5, 1e-3, log=True)
-        batch_size = trial.suggest_categorical("batch_size", [2, 4, 8])
-        epochs = trial.suggest_int("epochs", 1, 3)
+        lr = trial.suggest_float("lr", 1e-5, 1e-3, log=True)  # noqa: F841
+        batch_size = trial.suggest_categorical(  # noqa: F841,E501
+            "batch_size", [2, 4, 8]
+        )
+
+        epochs = trial.suggest_int("epochs", 1, 3)  # noqa: F841
         # Train with these params and return eval_loss
         # Simplified: just return a mock score
         return 1.0  # Replace with actual training
@@ -59,13 +63,13 @@ else:
         per_device_train_batch_size=int(os.getenv("FT_BATCH_SIZE", 2)),
         per_device_eval_batch_size=int(os.getenv("FT_BATCH_SIZE", 2)),
         num_train_epochs=int(os.getenv("FT_EPOCHS", 1)),
-    weight_decay=0.01,
-    save_total_limit=1,
-    logging_steps=50,
-    load_best_model_at_end=True,
-    remove_unused_columns=False,  # Keep all columns
-    dataloader_pin_memory=False,  # Disable for MPS
-)
+        weight_decay=0.01,
+        save_total_limit=1,
+        logging_steps=50,
+        load_best_model_at_end=True,
+        remove_unused_columns=False,  # Keep all columns
+        dataloader_pin_memory=False,  # Disable for MPS
+    )
 
 # Trainer
 trainer = Trainer(
@@ -96,13 +100,12 @@ if upload:
         )
         tokenizer.push_to_hub(
             "harpertoken/harpertokenConvAI-finetuned", token=hf_token
-        )
+        )  # noqa: E501
         print(
-            "Model and tokenizer pushed to harpertoken/harpertokenConvAI-finetuned"
+            "Model and tokenizer pushed to "
+            "harpertoken/harpertokenConvAI-finetuned"  # noqa: E501
         )
     else:
-        print(
-            "HF_TOKEN not set. Cannot upload to Hugging Face."
-        )
+        print("HF_TOKEN not set. Cannot upload to Hugging Face.")
 else:
     print("Upload not requested. Skipping Hugging Face upload.")

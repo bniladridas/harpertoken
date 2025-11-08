@@ -84,13 +84,13 @@ Dockerfile: `Dockerfile`
 
 ## Frequently Asked Questions
 
-**Q: How to increase training data?**  
+**Q: How to increase training data?**
 A: Edit `select(range(1000))` in `data_prep.py` to a larger range.
 
-**Q: Can this run on other hardware?**  
+**Q: Can this run on other hardware?**
 A: Yes, modify device to 'cuda' for GPU or 'cpu' for CPU-only.
 
-**Q: What if I want to deploy the model?**  
+**Q: What if I want to deploy the model?**
 A: Use Hugging Face's model upload after training.
 
 ## Semantic Versioning

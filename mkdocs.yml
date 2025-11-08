@@ -1,3 +1,4 @@
+---
 site_name: Harpertoken ConvAI Fine-tuning
 site_description: Scripts to fine-tune the harpertokenConvAI model on SQuAD dataset
 site_author: bniladridas
@@ -7,11 +8,11 @@ repo_url: https://github.com/bniladridas/harpertoken
 repo_name: harpertoken
 
 nav:
-  - Home: index.md
-  - Installation: installation.md
-  - Usage: usage.md
-  - API: api.md
-  - Contributing: contributing.md
+- Home: index.md
+- Installation: installation.md
+- Usage: usage.md
+- API: api.md
+- Contributing: contributing.md
 
 theme:
   name: material
@@ -19,24 +20,24 @@ theme:
     primary: blue
     accent: blue
   features:
-    - navigation.tabs
-    - navigation.sections
-    - toc.integrate
-    - search.suggest
-    - search.highlight
+  - navigation.tabs
+  - navigation.sections
+  - toc.integrate
+  - search.suggest
+  - search.highlight
 
 plugins:
-  - search
-  - mkdocstrings
+- search
+- mkdocstrings
 
 markdown_extensions:
-  - pymdownx.highlight
-  - pymdownx.superfences
-  - pymdownx.inlinehilite
-  - pymdownx.snippets
-  - pymdownx.arithmatex:
-      generic: true
-  - footnotes
-  - admonition
-  - toc:
-      permalink: true
+- pymdownx.highlight
+- pymdownx.superfences
+- pymdownx.inlinehilite
+- pymdownx.snippets
+- pymdownx.arithmatex:
+    generic: true
+- footnotes
+- admonition
+- toc:
+    permalink: true
