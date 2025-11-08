@@ -84,6 +84,10 @@ trainer = Trainer(
 # Train
 trainer.train()
 
+# Save model
+trainer.save_model("./results")
+tokenizer.save_pretrained("./results")
+
 # Push to Hugging Face if requested
 upload = os.getenv("FT_UPLOAD", "false").lower() == "true"
 if upload:
