@@ -119,4 +119,4 @@ If you use this model, please cite the original DistilBERT and SQuAD papers.
 
 ## Model Card Contact
 
-bni ladridas
+bniladridas
