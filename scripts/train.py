@@ -91,10 +91,14 @@ if upload:
     hf_token = os.getenv("HF_TOKEN")
     if hf_token:
         model_card = None
-        if os.path.exists('README.md'):
-            with open('README.md', 'r') as f:
+        if os.path.exists("README.md"):
+            with open("README.md", "r") as f:
                 model_card = f.read()
-        model.push_to_hub("harpertoken/harpertokenConvAI-finetuned", token=hf_token, model_card=model_card)
+        model.push_to_hub(
+            "harpertoken/harpertokenConvAI-finetuned",
+            token=hf_token,
+            model_card=model_card,
+        )
         tokenizer.push_to_hub("harpertoken/harpertokenConvAI-finetuned", token=hf_token)
         print("Model and tokenizer pushed to harpertoken/harpertokenConvAI-finetuned")
     else:
