@@ -1,9 +1,9 @@
 import torch
-from transformers import AutoTokenizer, BertForQuestionAnswering, pipeline
+from transformers import AutoTokenizer, DistilBertForQuestionAnswering, pipeline
 
 # Load fine-tuned model and tokenizer from checkpoint
 model_path = "./results"
-model = BertForQuestionAnswering.from_pretrained(  # noqa: E501
+model = DistilBertForQuestionAnswering.from_pretrained(  # noqa: E501
     model_path, local_files_only=True
 )
 tokenizer = AutoTokenizer.from_pretrained(

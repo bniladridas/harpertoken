@@ -2,7 +2,7 @@ import os
 import torch
 from transformers import (
     AutoTokenizer,
-    BertForQuestionAnswering,
+    DistilBertForQuestionAnswering,
     TrainingArguments,
     Trainer,
     DefaultDataCollator,
@@ -19,7 +19,7 @@ print(f"Using device: {device}")
 # Load model and tokenizer
 model_name = "harpertoken/harpertokenConvAI"
 tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = BertForQuestionAnswering.from_pretrained(model_name).to(device)
+model = DistilBertForQuestionAnswering.from_pretrained(model_name).to(device)
 
 # Load and preprocess data
 tokenized_squad = load_and_preprocess_data(tokenizer)
