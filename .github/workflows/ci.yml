@@ -3,77 +3,60 @@ name: CI
 on:
   push:
     branches:
-      - main
-      - master
       - harpertoken
   pull_request:
     branches:
-      - main
-      - master
       - harpertoken
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   lint:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
-
-    - name: Set up Python
-      uses: actions/setup-python@v4
+    - uses: actions/setup-python@v4
       with:
         python-version: '3.11'
-
-    - name: Install dependencies
-      run: |
+    - uses: actions/cache@v4
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+    - run: |
         python -m pip install --upgrade pip
         pip install flake8 black mypy
-
-    - name: Lint with flake8
-      run: |
-        flake8 scripts/ --count --select=E9,F63,F7,F82 --show-source --statistics
-        flake8 scripts/ --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
-
-    - name: Check formatting with black
-      run: |
-        black --check --diff scripts/
-
-    - name: Type check with mypy
-      run: |
-        mypy scripts/ || true  # Allow mypy to fail for now
+    - run: flake8 scripts/ --count --statistics
+    - run: black --check --diff scripts/
+    - run: mypy scripts/ || true
 
   ci-test:
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.11']
     steps:
     - uses: actions/checkout@v4
-
-    - name: Set up Python
-      uses: actions/setup-python@v4
+    - uses: actions/setup-python@v4
       with:
-        python-version: '3.11'
-
-    - name: Install dependencies
-      run: |
+        python-version: ${{ matrix.python-version }}
+    - uses: actions/cache@v4
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('**/requirements.txt') }}
+    - run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
-
-    - name: Test Python syntax
-      run: |
-        python -m py_compile scripts/*.py
-
-    - name: Run tests
-      run: |
-        PYTHONPATH=. pytest tests/ -v
-
-    - name: Test imports
-      run: |
+        pip install -r requirements.txt pytest pytest-cov huggingface_hub
+    - run: python -m py_compile scripts/*.py
+    - run: |
+        PYTHONPATH=. pytest tests/ -v --maxfail=1 --disable-warnings \
+          --cov=scripts --cov-report=term-missing
+    - run: |
         python -c "from scripts.data_prep import load_and_preprocess_data; print('Import ok')"
         python -c "import scripts.train; print('Train import ok')"
         python -c "import scripts.evaluate; print('Evaluate import ok')"
-
-    - name: Train model
-      env:
+    - env:
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
       run: |
         export FT_EPOCHS=1
@@ -82,18 +65,33 @@ jobs:
         export FT_UPLOAD=true
         export PYTHONPATH=.
         python scripts/train.py
+    - run: python scripts/evaluate.py
+    - run: echo "✅ Tests, imports, and training passed on Python ${{ matrix.python-version }}" >> $GITHUB_STEP_SUMMARY
 
-    - name: Validate model
-      run: |
-        python scripts/evaluate.py
-
-  build-and-push:
+  release-build:
     runs-on: ubuntu-latest
     needs: [lint, ci-test]
-
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+
+    - name: Extract version
+      id: version
+      run: |
+        echo "version=$(grep -oP '(?<=__version__ = \")[^\"]+' __version__.py)" >> $GITHUB_OUTPUT
+
+    - name: Check if version tag exists
+      id: check_tag
+      run: |
+        if git rev-parse "v${{ steps.version.outputs.version }}" >/dev/null 2>&1; then
+          echo "exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "exists=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Skip if version already released
+      if: steps.check_tag.outputs.exists == 'true'
+      run: echo "⚠️ Version already released. Skipping Docker build and release." && exit 0
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
@@ -109,27 +107,58 @@ jobs:
       with:
         registry: ghcr.io
         username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Extract metadata
-      id: meta
-      uses: docker/metadata-action@v5
-      with:
-        images: |
-          ${{ secrets.DOCKERHUB_USERNAME }}/harpertoken-convai-finetune
-          ghcr.io/${{ github.repository }}/harpertoken-convai-finetune
-        tags: |
-          type=ref,event=branch
-          type=ref,event=pr
-          type=sha,prefix={{branch}}-
-          type=raw,value=latest,enable={{is_default_branch}}
+        password: ${{ secrets.GH_PAT }}
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v5
       with:
         context: .
         push: true
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
+        tags: |
+          ${{ secrets.DOCKERHUB_USERNAME }}/harpertoken-convai-finetune:${{ steps.version.outputs.version }}
+          ghcr.io/${{ github.repository }}/harpertoken-convai-finetune:${{ steps.version.outputs.version }}
+          ${{ secrets.DOCKERHUB_USERNAME }}/harpertoken-convai-finetune:latest
         cache-from: type=gha
         cache-to: type=gha,mode=max
+
+    - name: Create Git tag
+      run: |
+        git config user.name "${{ github.actor }}"
+        git config user.email "${{ github.actor }}@users.noreply.github.com"
+        git tag -a "v${{ steps.version.outputs.version }}" -m "Release v${{ steps.version.outputs.version }}"
+        git push origin "v${{ steps.version.outputs.version }}"
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: v${{ steps.version.outputs.version }}
+        name: "Release v${{ steps.version.outputs.version }}"
+        body: |
+          🚀 Automatic release for version **${{ steps.version.outputs.version }}**
+          - Docker image pushed to DockerHub & GHCR
+          - Model uploaded to Hugging Face Hub
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+
+    - name: Upload model to Hugging Face Hub
+      env:
+        HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      run: |
+        echo "🧠 Uploading model to Hugging Face..."
+        python - <<'PY'
+import os
+from huggingface_hub import HfApi, HfFolder, upload_folder
+
+repo_id = "bniladridas/harpertoken-convai-finetune"
+model_dir = "scripts/model_output"  # adjust if your model saves elsewhere
+token = os.getenv("HF_TOKEN")
+
+upload_folder(
+    folder_path=model_dir,
+    repo_id=repo_id,
+    path_in_repo=".",
+    commit_message=f"Upload model for version {os.getenv('GITHUB_REF_NAME')}",
+    repo_type="model",
+    token=token
+)
+PY
