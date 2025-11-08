@@ -57,13 +57,12 @@ jobs:
           python -c "import scripts.evaluate; print('Evaluate import ok')"
       - env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: |
-          export FT_EPOCHS=1
-          export FT_BATCH_SIZE=1
-          export FT_LR=2e-5
-          export FT_UPLOAD=true
-          export PYTHONPATH=.
-          python scripts/train.py
+          FT_EPOCHS: 1
+          FT_BATCH_SIZE: 1
+          FT_LR: 2e-5
+          FT_UPLOAD: true
+          PYTHONPATH: .
+        run: python scripts/train.py
       - run: python scripts/evaluate.py
       - run: echo "✅ Tests, imports, and training passed on Python ${{ matrix.python-version }}" >> $GITHUB_STEP_SUMMARY
 
