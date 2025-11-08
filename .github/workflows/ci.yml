@@ -67,11 +67,10 @@ jobs:
         python -c "import scripts.evaluate; print('Evaluate import ok')"
 
     - name: Train model
-      env:
-        FT_EPOCHS: '1'
-        FT_BATCH_SIZE: '1'
-        FT_LR: '2e-5'
       run: |
+        export FT_EPOCHS=1
+        export FT_BATCH_SIZE=1
+        export FT_LR=2e-5
         python scripts/train.py
 
   build-and-push:
