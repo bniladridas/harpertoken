@@ -1,10 +1,10 @@
 import torch
-from transformers import AutoTokenizer, AutoModelForQuestionAnswering, pipeline
+from transformers import AutoTokenizer, BertForQuestionAnswering, pipeline
 
 # Load fine-tuned model and tokenizer from checkpoint
 model_path = "./results"
-model = AutoModelForQuestionAnswering.from_pretrained(  # noqa: E501
-    model_path, local_files_only=True, trust_remote_code=True
+model = BertForQuestionAnswering.from_pretrained(  # noqa: E501
+    model_path, local_files_only=True
 )
 tokenizer = AutoTokenizer.from_pretrained(
     model_path, local_files_only=True, trust_remote_code=True
