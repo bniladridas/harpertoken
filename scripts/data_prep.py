@@ -1,17 +1,18 @@
 import os
 from datasets import load_dataset
 
+
 def load_and_preprocess_data(tokenizer):
     # Load dataset based on env var
     dataset_name = os.getenv("FT_DATASET", "squad")
     if dataset_name == "squad":
         dataset = load_dataset("squad")
-        dataset['train'] = dataset['train'].select(range(1000))
-        dataset['validation'] = dataset['validation'].select(range(200))
+        dataset["train"] = dataset["train"].select(range(1000))
+        dataset["validation"] = dataset["validation"].select(range(200))
     else:
         # Add support for other datasets
         dataset = load_dataset(dataset_name)
-    print("Original train columns:", dataset['train'].column_names)
+    print("Original train columns:", dataset["train"].column_names)
 
     # Preprocessing function
     def preprocess_function(examples):
@@ -43,7 +44,10 @@ def load_and_preprocess_data(tokenizer):
         context_end = idx - 1
 
         # If the answer is not fully inside the context, label it (0, 0)
-        if offset_mapping[context_start][0] > end_char or offset_mapping[context_end][1] < start_char:
+        if (
+            offset_mapping[context_start][0] > end_char
+            or offset_mapping[context_end][1] < start_char
+        ):
             start_position = 0
             end_position = 0
         else:
@@ -63,7 +67,10 @@ def load_and_preprocess_data(tokenizer):
         return inputs
 
     # Tokenize datasets
-    tokenized_squad = dataset.map(preprocess_function, batched=False, remove_columns=["question", "context", "answers", "id", "title"])
-    print("Tokenized train columns:", tokenized_squad['train'].column_names)
+    tokenized_squad = dataset.map(
+        preprocess_function,
+        batched=False,
+        remove_columns=["question", "context", "answers", "id", "title"],
+    )
+    print("Tokenized train columns:", tokenized_squad["train"].column_names)
     return tokenized_squad
-

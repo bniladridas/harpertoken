@@ -1,10 +1,18 @@
 import os
 import torch
-from transformers import AutoTokenizer, AutoModelForQuestionAnswering, TrainingArguments, Trainer, DefaultDataCollator
+from transformers import (
+    AutoTokenizer,
+    AutoModelForQuestionAnswering,
+    TrainingArguments,
+    Trainer,
+    DefaultDataCollator,
+)
 from data_prep import load_and_preprocess_data
 
 # Check for MPS availability
-device = torch.device("mps") if torch.backends.mps.is_available() else torch.device("cpu")
+device = (
+    torch.device("mps") if torch.backends.mps.is_available() else torch.device("cpu")
+)
 print(f"Using device: {device}")
 
 # Load model and tokenizer
@@ -14,8 +22,8 @@ model = AutoModelForQuestionAnswering.from_pretrained(model_name).to(device)
 
 # Load and preprocess data
 tokenized_squad = load_and_preprocess_data(tokenizer)
-print("Train columns:", tokenized_squad['train'].column_names)
-print("Validation columns:", tokenized_squad['validation'].column_names)
+print("Train columns:", tokenized_squad["train"].column_names)
+print("Validation columns:", tokenized_squad["validation"].column_names)
 
 # Data collator
 data_collator = DefaultDataCollator()
@@ -24,6 +32,7 @@ data_collator = DefaultDataCollator()
 tune = os.getenv("FT_TUNE", "false").lower() == "true"
 if tune:
     import optuna
+
     def objective(trial):
         lr = trial.suggest_float("lr", 1e-5, 1e-3, log=True)
         batch_size = trial.suggest_categorical("batch_size", [2, 4, 8])
@@ -31,8 +40,10 @@ if tune:
         # Train with these params and return eval_loss
         # Simplified: just return a mock score
         return 1.0  # Replace with actual training
+
     study = optuna.create_study(direction="minimize")
     study.optimize(objective, n_trials=10)
+
     best = study.best_params
     lr = best["lr"]
     batch_size = best["batch_size"]
