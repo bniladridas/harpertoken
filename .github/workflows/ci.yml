@@ -64,7 +64,7 @@ jobs:
 
     - name: Run tests
       run: |
-        pytest tests/ -v
+        PYTHONPATH=. pytest tests/ -v
 
     - name: Test imports
       run: |
