@@ -20,9 +20,9 @@ fi
 # Run Black (code formatter) if available
 if command -v black &> /dev/null; then
     echo "Running Black code formatter..."
-    black --check --diff scripts/
+    black --check --diff .
     if [ $? -ne 0 ]; then
-        echo "ERROR: Code not formatted with Black. Run 'black scripts/' to fix."
+        echo "ERROR: Code not formatted with Black. Run 'black .' to fix."
         exit 1
     fi
 else
@@ -32,7 +32,7 @@ fi
 # Run Flake8 (linter) if available
 if command -v flake8 &> /dev/null; then
     echo "Running Flake8 linter..."
-    flake8 scripts/
+    flake8 .
     if [ $? -ne 0 ]; then
         echo "ERROR: Flake8 found issues. Fix them before committing."
         exit 1
@@ -44,7 +44,7 @@ fi
 # Run MyPy (type checker) if available
 if command -v mypy &> /dev/null; then
     echo "Running MyPy type checker..."
-    mypy scripts/
+    mypy .
     if [ $? -ne 0 ]; then
         echo "ERROR: MyPy found type issues. Fix them before committing."
         exit 1
@@ -56,7 +56,7 @@ fi
 # Run yamllint if available
 if command -v yamllint &> /dev/null; then
     echo "Running yamllint..."
-    yamllint .github/workflows/
+    yamllint .
     if [ $? -ne 0 ]; then
         echo "ERROR: yamllint found issues in YAML files."
         exit 1
@@ -67,7 +67,7 @@ fi
 
 # Check for TODO or FIXME in code
 echo "Checking for TODO/FIXME comments..."
-if grep -r "TODO\|FIXME" scripts/ --include="*.py"; then
+if grep -r "TODO\|FIXME" . --include="*.py"; then
     echo "WARNING: TODO/FIXME found in code. Consider addressing them."
 fi
 
