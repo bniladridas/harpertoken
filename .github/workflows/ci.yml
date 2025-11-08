@@ -52,27 +52,27 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Test Python syntax
+     - name: Test Python syntax
+       run: |
+         python -m py_compile scripts/*.py
+
+    - name: Run tests
       run: |
-        python -m py_compile scripts/*.py
+        pytest tests/ -v
 
-     - name: Run tests
-       run: |
-         pytest tests/ -v
+    - name: Test imports
+      run: |
+        python -c "from scripts.data_prep import load_and_preprocess_data; print('Import ok')"
+        python -c "import scripts.train; print('Train import ok')"
+        python -c "import scripts.evaluate; print('Evaluate import ok')"
 
-     - name: Test imports
-       run: |
-         python -c "from scripts.data_prep import load_and_preprocess_data; print('Import ok')"
-         python -c "import scripts.train; print('Train import ok')"
-         python -c "import scripts.evaluate; print('Evaluate import ok')"
-
-     - name: Train model
-       env:
-         FT_EPOCHS: 1
-         FT_BATCH_SIZE: 1
-         FT_LR: 2e-5
-       run: |
-         python scripts/train.py
+    - name: Train model
+      env:
+        FT_EPOCHS: 1
+        FT_BATCH_SIZE: 1
+        FT_LR: 2e-5
+      run: |
+        python scripts/train.py
 
   build-and-push:
     runs-on: ubuntu-latest
