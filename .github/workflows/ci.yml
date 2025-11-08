@@ -140,25 +140,4 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GH_PAT }}
 
-    - name: Upload model to Hugging Face Hub
-      env:
-        HF_TOKEN: ${{ secrets.HF_TOKEN }}
-      run: |
-        echo "🧠 Uploading model to Hugging Face..."
-        python - <<'PY'
-import os
-from huggingface_hub import HfApi, HfFolder, upload_folder
 
-repo_id = "bniladridas/harpertoken-convai-finetune"
-model_dir = "scripts/model_output"  # adjust if your model saves elsewhere
-token = os.getenv("HF_TOKEN")
-
-upload_folder(
-    folder_path=model_dir,
-    repo_id=repo_id,
-    path_in_repo=".",
-    commit_message=f"Upload model for version {os.getenv('GITHUB_REF_NAME')}",
-    repo_type="model",
-    token=token
-)
-PY
