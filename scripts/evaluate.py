@@ -1,5 +1,9 @@
 import torch
-from transformers import AutoTokenizer, DistilBertForQuestionAnswering, pipeline
+from transformers import (
+    AutoTokenizer,
+    DistilBertForQuestionAnswering,
+    pipeline,
+)  # noqa: E501
 
 # Load fine-tuned model and tokenizer from checkpoint
 model_path = "./results"
