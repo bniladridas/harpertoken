@@ -68,9 +68,9 @@ jobs:
 
     - name: Train model
       env:
-        FT_EPOCHS: 1
-        FT_BATCH_SIZE: 1
-        FT_LR: 2e-5
+        FT_EPOCHS: '1'
+        FT_BATCH_SIZE: '1'
+        FT_LR: '2e-5'
       run: |
         python scripts/train.py
 
