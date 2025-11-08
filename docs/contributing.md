@@ -52,13 +52,15 @@ Tests include data preprocessing validation.
 
 ## CI/CD
 
-This project uses GitHub Actions for continuous integration and Docker for containerization.
+This project uses GitHub Actions for continuous integration, model training, and Docker for containerization.
 
 - **Linting**: Flake8, Black, MyPy on every push/PR.
-- **Testing**: Pytest unit tests, syntax checks, and import tests.
+- **Testing**: Pytest unit tests, syntax checks, import tests, and post-training validation.
+- **Training**: Fine-tunes the model on a SQuAD subset with configurable epochs/batch/LR.
+- **Hugging Face Upload**: Pushes fine-tuned model and tokenizer to HF Hub with model card (requires `HF_TOKEN` secret).
 - **Docker Build**: Builds and pushes image to Docker Hub and GHCR on main branch.
 
-Workflow: `.github/workflows/ci.yml`
+Workflows: `.github/workflows/ci.yml` (CI/training), `.github/workflows/docs.yml` (MkDocs deployment to GitHub Pages)
 
 ## Docker
 
