@@ -7,7 +7,7 @@ from transformers import (
     Trainer,
     DefaultDataCollator,
 )
-from data_prep import load_and_preprocess_data
+from .data_prep import load_and_preprocess_data
 
 # Check for MPS availability
 device = (

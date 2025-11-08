@@ -73,6 +73,8 @@ jobs:
         python -c "import scripts.evaluate; print('Evaluate import ok')"
 
     - name: Train model
+      env:
+        HF_TOKEN: ${{ secrets.HF_TOKEN }}
       run: |
         export FT_EPOCHS=1
         export FT_BATCH_SIZE=1
