@@ -4,6 +4,8 @@ datasets
 accelerate
 PyYAML
 pytest
+pytest-cov
+huggingface_hub
 optuna
 fastapi
 uvicorn
