@@ -80,6 +80,7 @@ jobs:
         export FT_BATCH_SIZE=1
         export FT_LR=2e-5
         export FT_UPLOAD=true
+        export PYTHONPATH=.
         python scripts/train.py
 
     - name: Validate model
