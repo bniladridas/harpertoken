@@ -50,19 +50,15 @@ if tune:
     epochs = best["epochs"]
     print(f"Best params: {best}")
 else:
-    epochs = int(os.getenv("FT_EPOCHS", 1))  # noqa: F841
-    batch_size = int(os.getenv("FT_BATCH_SIZE", 2))  # noqa: F841
-    lr = float(os.getenv("FT_LR", 2e-5))  # noqa: F841
-
-# Training arguments
-training_args = TrainingArguments(
-    output_dir="./results",
-    eval_strategy="epoch",
-    save_strategy="epoch",
-    learning_rate=lr,
-    per_device_train_batch_size=batch_size,
-    per_device_eval_batch_size=batch_size,
-    num_train_epochs=epochs,
+    # Training arguments
+    training_args = TrainingArguments(
+        output_dir="./results",
+        eval_strategy="epoch",
+        save_strategy="epoch",
+        learning_rate=float(os.getenv("FT_LR", 2e-5)),
+        per_device_train_batch_size=int(os.getenv("FT_BATCH_SIZE", 2)),
+        per_device_eval_batch_size=int(os.getenv("FT_BATCH_SIZE", 2)),
+        num_train_epochs=int(os.getenv("FT_EPOCHS", 1)),
     weight_decay=0.01,
     save_total_limit=1,
     logging_steps=50,
@@ -98,11 +94,15 @@ if upload:
             token=hf_token,
             model_card=model_card,
         )
-        tokenizer.push_to_hub("harpertoken/harpertokenConvAI-finetuned", token=hf_token)
+        tokenizer.push_to_hub(
+            "harpertoken/harpertokenConvAI-finetuned", token=hf_token
+        )
         print(
             "Model and tokenizer pushed to harpertoken/harpertokenConvAI-finetuned"
         )
     else:
-        print("HF_TOKEN not set. Cannot upload to Hugging Face.")
+        print(
+            "HF_TOKEN not set. Cannot upload to Hugging Face."
+        )
 else:
     print("Upload not requested. Skipping Hugging Face upload.")

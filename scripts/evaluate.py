@@ -25,7 +25,9 @@ questions = [
     },
     {
         "question": "Who wrote Romeo and Juliet?",
-        "context": "William Shakespeare wrote many plays, including Romeo and Juliet.",
+        "context": (
+            "William Shakespeare wrote many plays, including Romeo and Juliet."
+        ),
         "answers": ["William Shakespeare", "Shakespeare"],
     },
 ]
