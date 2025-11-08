@@ -14,7 +14,7 @@ class QAPredictRequest(BaseModel):
 # Load model
 model_path = "./results/checkpoint-500"
 if os.path.exists(model_path):
-    qa_pipeline = pipeline("question-answering", model=model_path, device=-1)  # Use CPU
+    qa_pipeline = pipeline("question-answering", model=model_path, device=-1)
 else:
     qa_pipeline = pipeline(
         "question-answering", model="harpertoken/harpertokenConvAI", device=-1

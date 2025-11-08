@@ -1,5 +1,4 @@
 import os
-import os
 import torch
 from transformers import (
     AutoTokenizer,
@@ -51,9 +50,9 @@ if tune:
     epochs = best["epochs"]
     print(f"Best params: {best}")
 else:
-    epochs = int(os.getenv("FT_EPOCHS", 1))
-    batch_size = int(os.getenv("FT_BATCH_SIZE", 2))
-    lr = float(os.getenv("FT_LR", 2e-5))
+    epochs = int(os.getenv("FT_EPOCHS", 1))  # noqa: F841
+    batch_size = int(os.getenv("FT_BATCH_SIZE", 2))  # noqa: F841
+    lr = float(os.getenv("FT_LR", 2e-5))  # noqa: F841
 
 # Training arguments
 training_args = TrainingArguments(
@@ -100,7 +99,9 @@ if upload:
             model_card=model_card,
         )
         tokenizer.push_to_hub("harpertoken/harpertokenConvAI-finetuned", token=hf_token)
-        print("Model and tokenizer pushed to harpertoken/harpertokenConvAI-finetuned")
+        print(
+            "Model and tokenizer pushed to harpertoken/harpertokenConvAI-finetuned"
+        )
     else:
         print("HF_TOKEN not set. Cannot upload to Hugging Face.")
 else:

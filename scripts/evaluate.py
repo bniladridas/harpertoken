@@ -3,7 +3,9 @@ from transformers import AutoTokenizer, AutoModelForQuestionAnswering, pipeline
 
 # Load fine-tuned model and tokenizer from checkpoint
 model_path = "./results"
-model = AutoModelForQuestionAnswering.from_pretrained(model_path, local_files_only=True)
+model = AutoModelForQuestionAnswering.from_pretrained(
+    model_path, local_files_only=True
+)
 tokenizer = AutoTokenizer.from_pretrained(model_path, local_files_only=True)
 
 # Create QA pipeline
