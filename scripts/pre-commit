@@ -53,6 +53,18 @@ else
     echo "MyPy not installed. Install with 'pip install mypy' for type checking."
 fi
 
+# Run yamllint if available
+if command -v yamllint &> /dev/null; then
+    echo "Running yamllint..."
+    yamllint .github/workflows/
+    if [ $? -ne 0 ]; then
+        echo "ERROR: yamllint found issues in YAML files."
+        exit 1
+    fi
+else
+    echo "yamllint not installed. Install with 'pip install yamllint' for YAML linting."
+fi
+
 # Check for TODO or FIXME in code
 echo "Checking for TODO/FIXME comments..."
 if grep -r "TODO\|FIXME" scripts/ --include="*.py"; then
