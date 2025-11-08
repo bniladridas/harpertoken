@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-         <loc>https://bniladridas.github.io/path/</loc>
+         <loc>https://bniladridas.github.io/harpertoken/</loc>
          <lastmod>2025-11-08</lastmod>
     </url>
     <url>
-         <loc>https://bniladridas.github.io/path/api/</loc>
+         <loc>https://bniladridas.github.io/harpertoken/api/</loc>
          <lastmod>2025-11-08</lastmod>
     </url>
     <url>
-         <loc>https://bniladridas.github.io/path/contributing/</loc>
+         <loc>https://bniladridas.github.io/harpertoken/contributing/</loc>
          <lastmod>2025-11-08</lastmod>
     </url>
     <url>
-         <loc>https://bniladridas.github.io/path/installation/</loc>
+         <loc>https://bniladridas.github.io/harpertoken/installation/</loc>
          <lastmod>2025-11-08</lastmod>
     </url>
     <url>
-         <loc>https://bniladridas.github.io/path/usage/</loc>
+         <loc>https://bniladridas.github.io/harpertoken/usage/</loc>
          <lastmod>2025-11-08</lastmod>
     </url>
 </urlset>
