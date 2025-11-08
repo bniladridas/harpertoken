@@ -39,6 +39,7 @@ export FT_EPOCHS=$EPOCHS
 export FT_BATCH_SIZE=$BATCH_SIZE
 export FT_LR=$LR
 export FT_UPLOAD=$UPLOAD
+export PYTHONPATH=.
 
 # Run training script
 echo "Starting training..."
