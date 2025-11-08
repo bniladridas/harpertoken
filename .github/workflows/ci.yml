@@ -79,6 +79,7 @@ jobs:
         export FT_EPOCHS=1
         export FT_BATCH_SIZE=1
         export FT_LR=2e-5
+        export FT_UPLOAD=true
         python scripts/train.py
 
   build-and-push:
