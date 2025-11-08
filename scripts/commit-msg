@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Conventional Commit Hook
+# Enforces commit messages to follow conventional commit format
+
+COMMIT_MSG_FILE=$1
+COMMIT_MSG=$(cat $COMMIT_MSG_FILE)
+
+# Check if first line starts with conventional type (lowercase)
+if ! echo "$COMMIT_MSG" | head -n1 | grep -qE '^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\(.+\))?: .{1,}'; then
+    echo "ERROR: Commit message must start with a conventional type (feat, fix, docs, etc.) followed by ':' and description."
+    echo "Example: 'feat: add new feature'"
+    exit 1
+fi
+
+# Check if first line is lowercase (except for type)
+FIRST_LINE=$(echo "$COMMIT_MSG" | head -n1)
+TYPE_PART=$(echo "$FIRST_LINE" | cut -d: -f1)
+DESC_PART=$(echo "$FIRST_LINE" | cut -d: -f2-)
+
+if [[ "$DESC_PART" =~ [A-Z] ]]; then
+    echo "ERROR: Commit message description must be lowercase."
+    exit 1
+fi
+
+# Check length of first line ≤40 chars
+if [ ${#FIRST_LINE} -gt 40 ]; then
+    echo "ERROR: First line of commit message must be ≤40 characters."
+    exit 1
+fi
+
+echo "Commit message follows conventional standards."

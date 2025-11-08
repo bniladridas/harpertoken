@@ -1,0 +1,10 @@
+transformers
+torch
+datasets
+accelerate
+PyYAML
+pytest
+optuna
+fastapi
+uvicorn
+pydantic

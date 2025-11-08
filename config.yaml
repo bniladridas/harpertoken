@@ -1,0 +1,8 @@
+dataset: squad
+task: qa
+epochs: 1
+batch_size: 2
+learning_rate: 0.00002
+upload: false
+tune: false
+hf_token: ""  # Set in env or here (not recommended for security)

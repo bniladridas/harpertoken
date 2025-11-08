@@ -1,0 +1,63 @@
+#!/bin/bash
+
+# Pre-commit hook for code quality checks
+
+echo "Running pre-commit code quality checks..."
+
+# Activate venv if exists
+if [ -d "venv" ]; then
+    source venv/bin/activate
+fi
+
+# Check Python syntax
+echo "Checking Python syntax..."
+python -m py_compile scripts/*.py
+if [ $? -ne 0 ]; then
+    echo "ERROR: Python syntax errors found."
+    exit 1
+fi
+
+# Run Black (code formatter) if available
+if command -v black &> /dev/null; then
+    echo "Running Black code formatter..."
+    black --check --diff scripts/
+    if [ $? -ne 0 ]; then
+        echo "ERROR: Code not formatted with Black. Run 'black scripts/' to fix."
+        exit 1
+    fi
+else
+    echo "Black not installed. Install with 'pip install black' for code formatting."
+fi
+
+# Run Flake8 (linter) if available
+if command -v flake8 &> /dev/null; then
+    echo "Running Flake8 linter..."
+    flake8 scripts/
+    if [ $? -ne 0 ]; then
+        echo "ERROR: Flake8 found issues. Fix them before committing."
+        exit 1
+    fi
+else
+    echo "Flake8 not installed. Install with 'pip install flake8' for linting."
+fi
+
+# Run MyPy (type checker) if available
+if command -v mypy &> /dev/null; then
+    echo "Running MyPy type checker..."
+    mypy scripts/
+    if [ $? -ne 0 ]; then
+        echo "ERROR: MyPy found type issues. Fix them before committing."
+        exit 1
+    fi
+else
+    echo "MyPy not installed. Install with 'pip install mypy' for type checking."
+fi
+
+# Check for TODO or FIXME in code
+echo "Checking for TODO/FIXME comments..."
+if grep -r "TODO\|FIXME" scripts/ --include="*.py"; then
+    echo "WARNING: TODO/FIXME found in code. Consider addressing them."
+fi
+
+echo "Pre-commit checks passed."
+exit 0
