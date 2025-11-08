@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - harpertoken
-    paths:
-      - 'docs/**'
-      - 'mkdocs.yml'
 
 jobs:
   deploy:
