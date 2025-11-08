@@ -2,9 +2,15 @@ name: CI
 
 on:
   push:
-    branches: [ main, master, harpertoken ]
+    branches:
+      - main
+      - master
+      - harpertoken
   pull_request:
-    branches: [ main, master, harpertoken ]
+    branches:
+      - main
+      - master
+      - harpertoken
 
 jobs:
   lint:
